@@ -40,7 +40,17 @@ func createProject(name string) {
 	// Create project directory
 	os.MkdirAll(name, 0755)
 
-	// Create main.go
+	// Initialize go module ПЕРЕД созданием main.go
+	cmd := exec.Command("go", "mod", "init", name)
+	cmd.Dir = name
+	cmd.Run()
+
+	// Get Gin dependency ПЕРЕД созданием main.go
+	cmd = exec.Command("go", "get", "github.com/gin-gonic/gin")
+	cmd.Dir = name
+	cmd.Run()
+
+	// Create main.go ПОСЛЕ инициализации модуля и получения зависимостей
 	mainContent := []byte(`package main
 
 import "github.com/gin-gonic/gin"
@@ -59,16 +69,6 @@ func main() {
 		fmt.Printf("Error creating main.go: %v\n", err)
 		os.Exit(1)
 	}
-
-	// Initialize go module
-	cmd := exec.Command("go", "mod", "init", name)
-	cmd.Dir = name
-	cmd.Run()
-
-	// Get Gin dependency
-	cmd = exec.Command("go", "get", "github.com/gin-gonic/gin")
-	cmd.Dir = name
-	cmd.Run()
 
 	fmt.Printf("Project %s created successfully!\n", name)
 	fmt.Println("To start your project:")
