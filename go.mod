@@ -1,3 +1,3 @@
-module github.com/hdd17/gin-cli
+module gin-cli
 
 go 1.23.1
